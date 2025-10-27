@@ -1,0 +1,16 @@
+pre-commit:
+  parallel: true
+  commands:
+    check:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: bun x biome check --write --colors=off {staged_files}
+      stage_fixed: true
+    typescript:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bun x tsc --noEmit --project tsconfig.json
+
+commit-msg:
+  parallel: true
+  commands:
+    commitlint:
+      run: bun x commitlint --edit
