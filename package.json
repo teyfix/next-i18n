@@ -1,5 +1,5 @@
 {
-  "name": "@teyfix/i18n",
+  "name": "i18n",
   "type": "module",
   "exports": {
     "./server": {
