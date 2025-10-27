@@ -2,9 +2,9 @@ import { camelCase, capitalCase, pascalCase } from "change-case";
 import { createConsola } from "consola";
 import { dset } from "dset";
 import merge from "merge";
+import { existsSync } from "node:fs";
 import {
   copyFile,
-  exists,
   glob,
   mkdir,
   readFile,
@@ -117,7 +117,7 @@ const processFile = async (options: ProcessFile): Promise<Namespace> => {
 
       const copyPath = join(options.output, ref.path);
 
-      if (await exists(copyPath)) {
+      if (await existsSync(copyPath)) {
         logger.verbose("Locale file %s already exists", rel(copyPath));
       } else {
         logger.info("Copying locale file %s to %s", rel(file), rel(copyPath));
