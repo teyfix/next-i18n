@@ -1,6 +1,6 @@
 import React from "react";
-import type { IntlConfig } from "./config";
 import { IntlCacheError } from "../utils/errors";
+import type { IntlConfig } from "./config";
 
 type IntlCache<
   TLocale extends string,
@@ -41,7 +41,11 @@ export const initIntlCache = <
   const cache = getCache<TLocale, TMessages, TRef, TLocaleParam>();
 
   if (cache.config != null) {
-    throw new IntlCacheError("Already initialized");
+    /**
+     * Can be called multiple times while using
+     * simultaneously on both of layout and page components
+     */
+    // throw new IntlCacheError("Already initialized");
   }
 
   const init: IntlCache<TLocale, TMessages, TRef, TLocaleParam> = {
