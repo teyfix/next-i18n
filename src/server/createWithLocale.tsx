@@ -100,19 +100,17 @@ export const createWithLocale = <
       namespaces: [],
     };
 
-    const withNamespaces = <P extends NamespacePaths<TMessages, TRef>>(
+    const withNamespace = <P extends NamespacePaths<TMessages, TRef>>(
       ...namespaces: NonEmptyTuple<P>
     ) => {
       WithLocale.__i18n__.namespaces.push(...namespaces);
 
-      return Object.assign(WithLocale, {
-        __intl__: {
-          namespaces,
-        },
-      });
+      return WithLocale;
     };
 
-    return Object.assign(WithLocale, { withNamespaces });
+    WithLocale.withNamespace = withNamespace;
+
+    return WithLocale;
   };
 
   return withLocale as WithLocale<TLocale, TMessages, TRef, TLocaleParam>;
