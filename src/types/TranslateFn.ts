@@ -3,8 +3,7 @@ import type { Paths } from "./Paths";
 import type { RefObject, RefResult } from "./Ref";
 import type { ParamsMap, TemplateParam } from "./TemplateParam";
 import type { TranslateProxy } from "./TranslateProxy";
-
-type Value<T> = T[keyof T];
+import type { Value } from "./shared";
 
 type RenderPaths<T, TRef extends string> = string &
   Value<{

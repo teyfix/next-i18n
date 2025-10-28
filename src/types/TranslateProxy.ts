@@ -1,4 +1,5 @@
 import type { RefObject, RefResult } from "./Ref";
+import type { AnyFunction } from "./shared";
 import type { ParamsMap, TemplateParam } from "./TemplateParam";
 
 type ParamsGuard<Tpl, P extends string> = [P] extends [never]
@@ -10,8 +11,7 @@ type InferStringType<Tpl extends string> = ParamsGuard<Tpl, TemplateParam<Tpl>>;
 export type TranslateProxy<T, TRef extends string> = T extends
   | null
   | undefined
-  // biome-ignore lint/complexity/noBannedTypes: Function signature is not known
-  | Function
+  | AnyFunction
   ? T
   : T extends string
     ? InferStringType<T>
