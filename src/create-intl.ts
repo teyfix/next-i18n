@@ -5,6 +5,7 @@ import { createWithLocale, type IntlProps } from "./server/createWithLocale";
 import { getTranslations } from "./server/getTranslations";
 import type { InferTranslate } from "./types/InferTranslate";
 import type { NamespacePaths } from "./types/NamespacePaths";
+import type { MaybeModule } from "./types/shared";
 
 type Intl<
   _TLocale extends string,
@@ -24,6 +25,8 @@ type Intl<
     path: TPath,
   ) => InferTranslate<TMessages, TPath, TRef>;
 };
+
+export type IntlImport<T> = MaybeModule<T>;
 
 export const createIntl = <
   TLocale extends string,

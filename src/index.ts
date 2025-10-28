@@ -1,1 +1,1 @@
-export { createIntl } from "./create-intl";
+export { createIntl, type IntlImport } from "./create-intl";
