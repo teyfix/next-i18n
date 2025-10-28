@@ -1,10 +1,5 @@
 import type { RefObject } from "./Ref";
-
-// biome-ignore lint/complexity/noBannedTypes: Aliasing
-type AnyFunction = Function;
-
-// biome-ignore lint/suspicious/noExplicitAny: Aliasing
-type AnyArray = any[] | readonly any[];
+import type { AnyArray, AnyFunction, Value } from "./shared";
 
 /**
  * Declare banned types to avoid recursion (for namespaces)
@@ -18,11 +13,6 @@ type Banned<TRef extends string> =
   | AnyFunction
   | AnyArray
   | RefObject<TRef>;
-
-/**
- * Simple utility type to get the values of a type
- */
-type Value<T> = T[keyof T];
 
 /**
  * Concatenate strings
