@@ -35,17 +35,17 @@ const wrapRef = (
     refLoader?: RefLoader;
   },
 ) => {
-  if (typeof window !== "undefined") {
-    throw new IntlRefLoaderError('Cannot use "refLoader" in the browser');
-  }
-
-  if (!options.refLoader) {
-    throw new IntlRefLoaderError("Missing ref loader");
-  }
-
-  const refLoader = options.refLoader;
-
   async function IntlRef() {
+    const { refLoader } = options;
+
+    if (typeof window !== "undefined") {
+      throw new IntlRefLoaderError('Cannot use "refLoader" in the browser');
+    }
+
+    if (!refLoader) {
+      throw new IntlRefLoaderError("Missing ref loader");
+    }
+
     const mod = await refLoader(ref);
     const Component = "default" in mod ? mod.default : mod;
 
