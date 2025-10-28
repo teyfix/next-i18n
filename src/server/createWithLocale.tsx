@@ -109,6 +109,7 @@ export const createWithLocale = <
     const withNamespace = <P extends NamespacePaths<TMessages, TRef>>(
       ...namespaces: NonEmptyTuple<P>
     ) => {
+      providerProps.namespaces ||= [];
       providerProps.namespaces.push(...namespaces);
 
       return WithLocale;

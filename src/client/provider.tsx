@@ -6,9 +6,9 @@ import { IntlContextProvider } from "./context-provider";
 
 export async function IntlProvider(props: {
   children: React.ReactNode;
-  namespaces: string[];
+  namespaces: string[] | undefined;
 }) {
-  if (!props.namespaces.length) {
+  if (!props.namespaces?.length) {
     return props.children;
   }
 
