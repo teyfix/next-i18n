@@ -14,6 +14,11 @@ type IntlParams<TLocaleParam extends string> = NextParams & {
   [P in TLocaleParam]: string;
 };
 
+type IntlProviderProps = Omit<
+  React.ComponentProps<typeof IntlProvider>,
+  "children"
+>;
+
 export type IntlProps<TLocaleParam extends string> = {
   params: MaybePromise<IntlParams<TLocaleParam>>;
   searchParams: MaybePromise<NextParams>;
@@ -67,6 +72,10 @@ export const createWithLocale = <
   const withLocale = <P extends PropsWithChildren<IntlProps<TLocaleParam>>>(
     Component: React.ComponentType<P>,
   ): React.ComponentType<P> => {
+    const providerProps: IntlProviderProps = {
+      namespaces: [],
+    };
+
     async function WithLocale(props: P): Promise<React.ReactNode> {
       if (props == null) {
         throw new IntlWithLocaleError(notProvidedError("props"));
@@ -89,21 +98,18 @@ export const createWithLocale = <
       await loadTranslations();
 
       return (
-        <IntlProvider namespaces={WithLocale.__i18n__.namespaces}>
+        <IntlProvider {...providerProps}>
           <Component {...props} />
         </IntlProvider>
       );
     }
 
     WithLocale.displayName = `withLocale(${Component.displayName})`;
-    WithLocale.__i18n__ = {
-      namespaces: [],
-    };
 
     const withNamespace = <P extends NamespacePaths<TMessages, TRef>>(
       ...namespaces: NonEmptyTuple<P>
     ) => {
-      WithLocale.__i18n__.namespaces.push(...namespaces);
+      providerProps.namespaces.push(...namespaces);
 
       return WithLocale;
     };
