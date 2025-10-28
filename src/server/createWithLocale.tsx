@@ -31,30 +31,28 @@ const notProvidedError = (message: string) =>
 const oneOf = <T,>(values: NonEmptyTuple<T>, value: unknown): value is T =>
   values.some((item) => item === value);
 
-type WithLocaleComponent<TLocaleParam extends string> = <
-  P extends PropsWithChildren<IntlProps<TLocaleParam>>,
->(
-  Component: React.ComponentType<P>,
-) => React.ComponentType<P>;
+type WithoutNamespaces<
+  Haystack extends string,
+  Needle extends string,
+> = Haystack extends Needle | `${Needle}.${string}` ? never : Haystack;
 
-type WithNamespaceHelper<
-  TLocale extends string,
-  TMessages extends object,
-  TRef extends string,
-  TLocaleParam extends string,
-> = {
-  withNamespace: <P extends NamespacePaths<TMessages, TRef>>(
+type WithLocaleInner<
+  Props extends object,
+  Namespaces extends string,
+> = React.ComponentType<Props> & {
+  withNamespace: <P extends Namespaces>(
     ...namespaces: NonEmptyTuple<P>
-  ) => WithLocale<TLocale, TMessages, TRef, TLocaleParam>;
+  ) => WithLocaleInner<Props, WithoutNamespaces<Namespaces, P>>;
 };
 
 export type WithLocale<
-  TLocale extends string,
+  _TLocale extends string,
   TMessages extends object,
   TRef extends string,
   TLocaleParam extends string,
-> = WithLocaleComponent<TLocaleParam> &
-  WithNamespaceHelper<TLocale, TMessages, TRef, TLocaleParam>;
+> = <Props extends PropsWithChildren<IntlProps<TLocaleParam>>>(
+  Component: React.ComponentType<Props>,
+) => WithLocaleInner<Props, NamespacePaths<TMessages, TRef>>;
 
 export const createWithLocale = <
   TLocale extends string,
