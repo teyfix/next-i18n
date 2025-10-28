@@ -1,25 +1,14 @@
 import dlv from "dlv";
-import { dset } from "dset/merge";
-import { klona } from "klona";
-import { getIntlCache } from "../core/cache";
 import type { InferTranslate } from "../types/InferTranslate";
 import type { NamespacePaths } from "../types/NamespacePaths";
 import { createTFunction } from "../utils/createTFunction";
-import { IntlClientError } from "../utils/errors";
-import { wrapMessages } from "../utils/wrapMessages";
+import { IntlClientError, IntlContextError } from "../utils/errors";
 import { useIntlContext } from "./context-provider";
 
-declare var window: unknown;
+const nspHint =
+  "Maybe you forgot to declare namespaces using `withLocale().withNamespaces(...)`?";
 
-const localeNotLoaded = (locale: string) => {
-  throw new IntlClientError(`Locale "${locale}" not loaded`);
-};
-
-const nspNotFound = (path: string, locale: string) => {
-  throw new IntlClientError(
-    `Namespace "${path}" not found in locale "${locale}"`,
-  );
-};
+const nspNotFound = (message: string) => `${message}\n${nspHint}`;
 
 export const useTranslations = <
   TMessages extends object,
@@ -31,73 +20,19 @@ export const useTranslations = <
   const context = useIntlContext();
 
   if (context == null) {
-    throw new IntlClientError(
-      "useTranslations must be used within <IntlProvider />",
+    throw new IntlContextError(
+      nspNotFound("`useTranslations` must be used within `<IntlProvider />`"),
     );
   }
 
-  let nsp = dlv(context.messages, path);
-
-  /**
-   * Try to load the namespace from React.cache
-   * if we're in the server
-   */
-  if (nsp == null && typeof window === "undefined") {
-    const { config, locale, messages, client } = getIntlCache();
-
-    /**
-     * Check if the locale is loaded.
-     */
-    if (messages[locale] == null) {
-      localeNotLoaded(locale);
-    }
-
-    /**
-     * Check the cache if we loaded the namespace
-     */
-    nsp = dlv(client[locale], path);
-
-    /**
-     * If not, load the namespace
-     */
-    if (nsp == null) {
-      /**
-       * Get the namespace from React.cache
-       */
-      nsp = dlv(messages[locale], path);
-
-      /**
-       * Locale is loaded but namespace does not exist
-       */
-      if (nsp == null) {
-        nspNotFound(path, locale);
-      }
-
-      /**
-       * Wrap the namespace without refLoader
-       * since passing the function to the client
-       * is not possible
-       */
-      nsp = wrapMessages(klona(nsp), {
-        refProp: config.refProp,
-      });
-
-      client[locale] ||= {};
-
-      /**
-       * Update client cache for SSR
-       */
-      dset(client[locale], path, nsp);
-
-      /**
-       * Update client context for hydration
-       */
-      dset(context.messages, path, nsp);
-    }
-  }
+  const nsp = dlv(context.messages, path);
 
   if (nsp == null) {
-    nspNotFound(path, context.locale);
+    throw new IntlClientError(
+      nspNotFound(
+        `Namespace "${path}" not found in locale "${context.locale}"`,
+      ),
+    );
   }
 
   const tFunction = createTFunction(nsp, path);

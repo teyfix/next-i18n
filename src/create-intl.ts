@@ -1,21 +1,18 @@
-import type { PropsWithChildren } from "react";
 import { useTranslations } from "./client/useTranslations";
 import { createConfig, type IntlOptions } from "./core/config";
-import { createWithLocale, type IntlProps } from "./server/createWithLocale";
+import { createWithLocale, type WithLocale } from "./server/createWithLocale";
 import { getTranslations } from "./server/getTranslations";
 import type { InferTranslate } from "./types/InferTranslate";
 import type { NamespacePaths } from "./types/NamespacePaths";
 import type { MaybeModule } from "./types/shared";
 
 type Intl<
-  _TLocale extends string,
+  TLocale extends string,
   TMessages extends object,
   TRef extends string,
   TLocaleParam extends string,
 > = {
-  withLocale: <P extends PropsWithChildren<IntlProps<TLocaleParam>>>(
-    Component: React.ComponentType<P>,
-  ) => React.ComponentType<P>;
+  withLocale: WithLocale<TLocale, TMessages, TRef, TLocaleParam>;
 
   getTranslations: <TPath extends NamespacePaths<TMessages, TRef>>(
     path: TPath,

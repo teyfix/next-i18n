@@ -15,3 +15,7 @@ export class IntlMessageError extends IntlError {}
 export class IntlMissingParamError extends IntlError {}
 
 export class IntlClientError extends IntlError {}
+
+export class IntlContextError extends IntlClientError {}
+
+export class IntlProviderError extends IntlError {}
